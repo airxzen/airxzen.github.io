@@ -17,6 +17,12 @@ function handleFileUpload(event) {
     // Split the file content by newlines to create the words list
     words = fileContent.split("\n").map(word => word.trim()).filter(word => word !== "");
     
+    // Ensure we have enough words (at least 25 for a 5x5 grid)
+    if (words.length < gridSize * gridSize) {
+      alert("The file doesn't contain enough words. Please ensure there are at least 25 words.");
+      return;
+    }
+    
     // After uploading, regenerate the bingo card with new words
     generateBingoCard();
   };
@@ -27,19 +33,10 @@ function handleFileUpload(event) {
 // Function to generate bingo card from words
 function generateBingoCard() {
   const grid = document.getElementById("bingoGrid");
-  grid.innerHTML = "";
-
-  // If words list is empty, use a default set
-  if (words.length === 0) {
-    words = shuffle([
-      "Apple", "Banana", "Cherry", "Date", "Grapes", "Lemon", "Mango", "Orange", "Peach", "Pear", 
-      "Plum", "Pineapple", "Raspberry", "Strawberry", "Watermelon", "Kiwi", "Papaya", "Blueberry", 
-      "Melon", "Apricot", "Cantaloupe", "Coconut", "Pomegranate", "Dragonfruit", "Grapefruit"
-    ]);
-  }
+  grid.innerHTML = "";  // Clear any existing grid content
 
   // Shuffle and select 25 words for the bingo grid
-  const selectedWords = words.slice(0, gridSize * gridSize);
+  const selectedWords = shuffle(words).slice(0, gridSize * gridSize);
   
   // Create grid cells with words
   selectedWords.forEach((word, index) => {
@@ -66,3 +63,21 @@ function markCell(cell) {
     markedCount--;
   } else {
     cell.classList.add("marked");
+    markedCount++;
+  }
+}
+
+// Function to check for Blackout mode
+function checkBlackout() {
+  if (markedCount === gridSize * gridSize) {
+    document.getElementById("status").textContent = "Blackout! You marked all the squares!";
+  } else {
+    document.getElementById("status").textContent = `You have ${markedCount} marked squares. Keep going!`;
+  }
+}
+
+// Event listener for file input
+document.getElementById("fileInput").addEventListener("change", handleFileUpload);
+
+// Initialize the bingo card when the page loads with default words
+window.onload = generateBingoCard;
