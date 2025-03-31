@@ -9,12 +9,19 @@
 <body>
   <div class="bingo-board">
     <h1>Bingo Card</h1>
+    
+    <!-- Add file input for uploading custom list -->
+    <label for="fileInput">Upload Bingo Words List:</label>
+    <input type="file" id="fileInput" accept=".txt" />
+    
     <div class="grid" id="bingoGrid">
       <!-- Bingo grid will be dynamically populated here -->
     </div>
+    
     <button id="blackoutButton" onclick="checkBlackout()">Blackout Mode</button>
     <p id="status"></p>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>
