@@ -15,7 +15,11 @@ function handleFileUpload(event) {
     const fileContent = e.target.result;
 
     // Split the file content by newlines to create the words list
-    words = fileContent.split("\n").map(word => word.trim()).filter(word => word !== "");
+    // Now each line can have multiple words separated by space or another delimiter
+    words = fileContent.split("\n")
+                       .map(line => line.trim().split(/\s+/))  // Split by spaces or other delimiters
+                       .flat()                                 // Flatten the array of arrays into a single array
+                       .filter(word => word !== "");           // Remove any empty words
     
     // Ensure we have enough words (at least 25 for a 5x5 grid)
     if (words.length < gridSize * gridSize) {
