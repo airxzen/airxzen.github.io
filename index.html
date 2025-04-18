@@ -11,8 +11,35 @@
     <h1>Join a Bingo Room</h1>
     <input type="text" id="roomCode" placeholder="Enter Room Code">
     <button onclick="joinRoom()">Join Room</button>
+    <button onclick="createRoom()">Create New Room</button>
   </div>
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js"></script>
+  <script src="firebase-config.js"></script>
   <script>
+    let userId = null;
+
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        userId = user.uid;
+      }
+    });
+
+    function createRoom() {
+      if (!userId) {
+        alert("Please sign in first.");
+        return;
+      }
+      const roomCode = generateRoomCode();
+      const roomRef = firebase.database().ref(`rooms/${roomCode}`);
+      roomRef.set({
+        host: userId,
+        words: [],
+        marks: []
+      });
+      window.location.href = `bingo.html?room=${roomCode}`;
+    }
+
     function joinRoom() {
       const roomCode = document.getElementById("roomCode").value.trim().toUpperCase();
       if (roomCode) {

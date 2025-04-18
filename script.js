@@ -6,6 +6,26 @@ let isHost = false;
 const fileInput = document.getElementById("fileInput");
 const status = document.getElementById("status");
 const grid = document.getElementById("bingoGrid");
+let userId = null;
+
+firebase.auth().onAuthStateChanged(function(user) {
+  if (user) {
+    userId = user.uid;
+    checkIfHost();
+  }
+});
+
+function checkIfHost() {
+  const roomRef = firebase.database().ref(`rooms/${roomCode}`);
+  roomRef.once("value", snap => {
+    const roomData = snap.val();
+    if (roomData && roomData.host === userId) {
+      isHost = true;
+      document.getElementById("uploadBtn").style.display = "inline-block";
+      document.getElementById("resetBtn").style.display = "inline-block";
+    }
+  });
+}
 
 function renderGrid(words) {
   grid.innerHTML = "";
@@ -57,22 +77,39 @@ function listenForUpdates() {
   });
 }
 
-if (fileInput) {
-  fileInput.addEventListener("change", e => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(event) {
-      const lines = event.target.result.split("\n").map(l => l.trim()).filter(Boolean);
-      if (lines.length < gridSize * gridSize) {
-        alert("Not enough entries (need at least 25).");
-        return;
-      }
-      const selected = lines.slice(0, gridSize * gridSize);
-      firebase.database().ref(`rooms/${roomCode}`).set({ words: selected, marks: [] });
-    };
-    reader.readAsText(file);
-  });
+function uploadWords() {
+  if (!isHost) {
+    alert("Only the host can upload words.");
+    return;
+  }
+
+  const file = fileInput.files[0];
+  if (!file) {
+    alert("Please select a file.");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    const lines = event.target.result.split("
+").map(l => l.trim()).filter(Boolean);
+    if (lines.length < gridSize * gridSize) {
+      alert("Not enough entries (need at least 25).");
+      return;
+    }
+    const selected = lines.slice(0, gridSize * gridSize);
+    firebase.database().ref(`rooms/${roomCode}`).set({ words: selected, marks: [] });
+  };
+  reader.readAsText(file);
+}
+
+function resetGame() {
+  if (!isHost) {
+    alert("Only the host can reset the game.");
+    return;
+  }
+  const roomRef = firebase.database().ref(`rooms/${roomCode}/marks`);
+  roomRef.set([]);
 }
 
 listenForUpdates();
