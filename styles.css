@@ -1,52 +1,36 @@
 body {
   font-family: Arial, sans-serif;
+  background: #f4f4f4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+}
+.container {
   text-align: center;
-  background-color: #f4f4f4;
 }
-
-.bingo-board {
-  width: 50%;
-  margin: 20px auto;
-  padding: 10px;
-  border-radius: 8px;
-  background-color: #fff;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-}
-
 .grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
-  margin-bottom: 20px;
+  grid-template-columns: repeat(5, 120px);
+  grid-template-rows: repeat(5, 120px);
+  gap: 5px;
+  margin-top: 20px;
 }
-
 .grid div {
-  padding: 20px;
-  background-color: #f4f4f4;
-  border-radius: 4px;
-  cursor: pointer;
+  background: #fff;
+  border: 2px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-}
-
-.grid div.marked {
-  background-color: #4CAF50;
-  color: white;
-}
-
-button {
-  padding: 10px 20px;
-  background-color: #007BFF;
-  color: white;
-  border: none;
-  border-radius: 4px;
   cursor: pointer;
-  font-size: 16px;
+  padding: 10px;
 }
-
-button:hover {
-  background-color: #0056b3;
+.grid div.marked {
+  background: #90ee90;
+  text-decoration: line-through;
 }
-
-p {
-  font-size: 18px;
+input[type="file"] {
+  margin: 10px 0;
 }
